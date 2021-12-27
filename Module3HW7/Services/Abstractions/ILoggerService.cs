@@ -9,6 +9,6 @@ namespace Module3HW7.Services.Abstractions
     public interface ILoggerService
     {
         public event Action OnBackup;
-        public void Log(string message);
+        public Task LogAsync(string message);
     }
 }

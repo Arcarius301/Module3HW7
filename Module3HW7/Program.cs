@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Module3HW7.Models;
 using Module3HW7.Services;
@@ -8,7 +9,7 @@ namespace Module3HW7
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var serviceProvider = new ServiceCollection()
                            .AddSingleton<ILoggerService, LoggerService>()
@@ -18,7 +19,7 @@ namespace Module3HW7
                            .BuildServiceProvider();
 
             var starter = serviceProvider.GetService<Starter>();
-            starter?.Run();
+            await starter?.Run();
         }
     }
 }

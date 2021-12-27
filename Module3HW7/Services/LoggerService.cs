@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using Module3HW7.Services.Abstractions;
 
@@ -9,6 +10,7 @@ namespace Module3HW7.Services
 {
     public class LoggerService : ILoggerService
     {
+        private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IConfigService _configService;
         private readonly IFileService _fileService;
         private readonly int _backupFrequency;
@@ -18,14 +20,17 @@ namespace Module3HW7.Services
         {
             _configService = configService;
             _fileService = fileService;
+            _semaphoreSlim = new SemaphoreSlim(1);
             _counter = _fileService.LinesCount;
             _backupFrequency = _configService.LoggerConfig.BackupFrequency;
         }
 
         public event Action OnBackup;
 
-        public void Log(string message)
+        public async Task LogAsync(string message)
         {
+            await _semaphoreSlim.WaitAsync();
+
             if (_counter % _backupFrequency == 0 && _counter != 0)
             {
                 OnBackup?.Invoke();
@@ -33,8 +38,10 @@ namespace Module3HW7.Services
             }
 
             Console.WriteLine(message);
-            _fileService.Write(message);
+            await _fileService.WriteAsync(message);
             _counter++;
+
+            _semaphoreSlim.Release();
         }
     }
 }

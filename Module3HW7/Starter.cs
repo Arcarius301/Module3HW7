@@ -23,27 +23,29 @@ namespace Module3HW7
             _loggerService.OnBackup += () => MakeBackup();
         }
 
-        public void Run()
+        public async Task Run()
         {
-            FirstMethod();
-            SecondMethod();
+            var list = new List<Task>();
+            list.Add(Task.Run(async () => { await FirstMethod(); }));
+            list.Add(Task.Run(async () => { await SecondMethod(); }));
+            await Task.WhenAll(list);
         }
 
-        public void FirstMethod()
+        public async Task FirstMethod()
         {
             for (var i = 1; i <= 50; i++)
             {
                 var j = i;
-                _loggerService.Log($"{nameof(FirstMethod)}: {j}");
+                await _loggerService.LogAsync($"{nameof(FirstMethod)}: {j}");
             }
         }
 
-        public void SecondMethod()
+        public async Task SecondMethod()
         {
             for (var i = 1; i <= 50; i++)
             {
                 var j = i;
-                _loggerService.Log($"{nameof(SecondMethod)}: {j}");
+                await _loggerService.LogAsync($"{nameof(SecondMethod)}: {j}");
             }
         }
 

@@ -10,7 +10,7 @@ namespace Module3HW7.Services.Abstractions
     {
         public int LinesCount { get; }
         public string ReadFile(string path);
-        public void Write(string data);
+        public Task WriteAsync(string data);
         public void Copy();
     }
 }

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.IO;
 using Module3HW7.Services.Abstractions;
@@ -10,6 +11,7 @@ namespace Module3HW7.Services
 {
     public class FileService : IFileService
     {
+        private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IConfigService _configService;
         private readonly StreamWriter _streamWriter;
         private readonly string _directoryPath;
@@ -18,12 +20,13 @@ namespace Module3HW7.Services
 
         public FileService(IConfigService configService)
         {
+            _semaphoreSlim = new SemaphoreSlim(1);
             _configService = configService;
             _directoryPath = _configService.FileConfig.DirectoryPath;
             _fileName = _configService.FileConfig.FileName;
             _path = Path.Combine(_directoryPath, _fileName);
             Init();
-            _streamWriter = new StreamWriter(_path, true) { AutoFlush = true };
+            _streamWriter = new StreamWriter(_path, true);
         }
 
         public int LinesCount { get; private set; }
@@ -32,10 +35,12 @@ namespace Module3HW7.Services
             return File.ReadAllText(path);
         }
 
-        public void Write(string data)
+        public async Task WriteAsync(string data)
         {
-            _streamWriter.WriteLine(data);
-            _streamWriter.Flush();
+            await _semaphoreSlim.WaitAsync();
+            await _streamWriter.WriteLineAsync(data);
+            await _streamWriter.FlushAsync();
+            _semaphoreSlim.Release();
         }
 
         public void Copy()
