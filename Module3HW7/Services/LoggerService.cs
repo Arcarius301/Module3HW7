@@ -12,7 +12,7 @@ namespace Module3HW7.Services
         private readonly IConfigService _configService;
         private readonly IFileService _fileService;
         private readonly int _backupFrequency;
-        private readonly int _counter = 0;
+        private int _counter = 0;
 
         public LoggerService(IConfigService configService, IFileService fileService)
         {
@@ -23,6 +23,7 @@ namespace Module3HW7.Services
 
         public void Log(string message)
         {
+            _counter++;
             if (_counter % _backupFrequency == 0)
             {
                 _fileService.Copy();

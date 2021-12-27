@@ -8,7 +8,7 @@ namespace Module3HW7
 {
     public class Starter
     {
-        public void Start()
+        public void Run()
         {
         }
     }
