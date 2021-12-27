@@ -11,5 +11,6 @@ namespace Module3HW7.Services.Abstractions
     {
         public Config Config { get; }
         public LoggerConfig LoggerConfig { get; }
+        public FileConfig FileConfig { get; }
     }
 }

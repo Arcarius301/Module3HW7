@@ -24,6 +24,8 @@ namespace Module3HW7.Services
         public Config Config => _config;
         public LoggerConfig LoggerConfig => _config.LoggerConfig;
 
+        public FileConfig FileConfig => _config.FileConfig;
+
         private void Init()
         {
             var configFile = _fileService.ReadFile(ConfigPath);

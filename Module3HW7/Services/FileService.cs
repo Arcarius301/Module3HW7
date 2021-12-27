@@ -10,10 +10,20 @@ namespace Module3HW7.Services
 {
     public class FileService : IFileService
     {
+        private readonly IConfigService _configService;
         private readonly StreamWriter _streamWriter;
-        public FileService(string path)
+        private readonly string _directoryPath;
+        private readonly string _fileName;
+        private readonly string _path;
+
+        public FileService(IConfigService configService)
         {
-            _streamWriter = new StreamWriter(path) { AutoFlush = true };
+            _configService = configService;
+            _directoryPath = _configService.FileConfig.DirectoryPath;
+            _fileName = _configService.FileConfig.FileName;
+            _path = $@"{_directoryPath}/{_fileName}";
+            Init();
+            _streamWriter = new StreamWriter($@"{_directoryPath}/{_fileName}") { AutoFlush = true };
         }
 
         public string ReadFile(string path)
@@ -24,6 +34,20 @@ namespace Module3HW7.Services
         public void Write(string data)
         {
             _streamWriter.WriteLine(data);
+        }
+
+        public void Copy()
+        {
+            var fileInfo = new FileInfo(_path);
+            File.Copy(_path, @$"{_directoryPath}/Backup/{fileInfo.CreationTimeUtc}");
+        }
+
+        private void Init()
+        {
+            if (!Directory.Exists(_path))
+            {
+                Directory.CreateDirectory(_path);
+            }
         }
     }
 }

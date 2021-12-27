@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Module3HW7.Models
 {
-    public class LoggerConfig
+    public class FileConfig
     {
-        public int BackupFrequency { get; set; }
+        public string FileName { get; set; }
+        public string DirectoryPath { get; set; }
     }
 }
