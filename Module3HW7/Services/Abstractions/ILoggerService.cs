@@ -8,5 +8,6 @@ namespace Module3HW7.Services.Abstractions
 {
     public interface ILoggerService
     {
+        public void Log(string message);
     }
 }

@@ -21,11 +21,12 @@ namespace Module3HW7.Services
             _configService = configService;
             _directoryPath = _configService.FileConfig.DirectoryPath;
             _fileName = _configService.FileConfig.FileName;
-            _path = $@"{_directoryPath}/{_fileName}";
+            _path = Path.Combine(_directoryPath, _fileName);
             Init();
-            _streamWriter = new StreamWriter($@"{_directoryPath}/{_fileName}") { AutoFlush = true };
+            _streamWriter = new StreamWriter(_path, true) { AutoFlush = true };
         }
 
+        public int LinesCount { get; private set; }
         public string ReadFile(string path)
         {
             return File.ReadAllText(path);
@@ -34,19 +35,41 @@ namespace Module3HW7.Services
         public void Write(string data)
         {
             _streamWriter.WriteLine(data);
+            _streamWriter.Flush();
         }
 
         public void Copy()
         {
-            var fileInfo = new FileInfo(_path);
-            File.Copy(_path, @$"{_directoryPath}/Backup/{fileInfo.CreationTimeUtc}");
+            var path = Path.Combine(Directory.GetCurrentDirectory(), _directoryPath, _fileName);
+            var destinationPath = Path.Combine(Directory.GetCurrentDirectory(), _directoryPath, "Backup", $"{DateTime.Now.ToString("yyyyMMddHHmmssffffff")}.txt");
+            File.Copy(path, destinationPath);
         }
 
         private void Init()
         {
-            if (!Directory.Exists(_path))
+            if (!Directory.Exists(_directoryPath))
             {
-                Directory.CreateDirectory(_path);
+                Directory.CreateDirectory(_directoryPath);
+            }
+
+            if (!Directory.Exists($@"{_directoryPath}/Backup"))
+            {
+                Directory.CreateDirectory($@"{_directoryPath}/Backup");
+            }
+
+            DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(_directoryPath, "Backup"));
+            var lastBackupLines = 0;
+
+            if (directoryInfo.GetFiles().Length != 0)
+            {
+                lastBackupLines = File.ReadLines(Path.Combine(_directoryPath, "Backup", directoryInfo.GetFiles()
+                    .OrderByDescending(f => f.CreationTimeUtc)
+                    .First().Name)).Count();
+            }
+
+            if (File.Exists(_path))
+            {
+                LinesCount = File.ReadLines(_path).Count() - lastBackupLines;
             }
         }
     }

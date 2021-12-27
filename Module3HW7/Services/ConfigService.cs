@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 using Newtonsoft.Json;
 using Module3HW7.Services.Abstractions;
 using Module3HW7.Models;
@@ -12,12 +13,10 @@ namespace Module3HW7.Services
     public class ConfigService : IConfigService
     {
         private const string ConfigPath = "config.json";
-        private readonly IFileService _fileService;
         private Config _config;
 
-        public ConfigService(IFileService fileService)
+        public ConfigService()
         {
-            _fileService = fileService;
             Init();
         }
 
@@ -28,7 +27,7 @@ namespace Module3HW7.Services
 
         private void Init()
         {
-            var configFile = _fileService.ReadFile(ConfigPath);
+            var configFile = File.ReadAllText(ConfigPath);
             _config = JsonConvert.DeserializeObject<Config>(configFile);
         }
     }

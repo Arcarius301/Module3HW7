@@ -16,8 +16,9 @@ namespace Module3HW7
                            .AddTransient<IFileService, FileService>()
                            .AddTransient<Starter>()
                            .BuildServiceProvider();
-            var app = serviceProvider.GetService<Starter>();
-            app?.Run();
+
+            var starter = serviceProvider.GetService<Starter>();
+            starter?.Run();
         }
     }
 }
