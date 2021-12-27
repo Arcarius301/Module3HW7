@@ -8,5 +8,7 @@ namespace Module3HW7.Services.Abstractions
 {
     public interface IFileService
     {
+        public string ReadFile(string path);
+        public void Write(string data);
     }
 }
