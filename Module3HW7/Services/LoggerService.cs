@@ -22,11 +22,13 @@ namespace Module3HW7.Services
             _backupFrequency = _configService.LoggerConfig.BackupFrequency;
         }
 
+        public event Action OnBackup;
+
         public void Log(string message)
         {
             if (_counter % _backupFrequency == 0 && _counter != 0)
             {
-                _fileService.Copy();
+                OnBackup?.Invoke();
                 Console.WriteLine(_counter);
             }
 

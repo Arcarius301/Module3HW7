@@ -13,7 +13,7 @@ namespace Module3HW7
             var serviceProvider = new ServiceCollection()
                            .AddSingleton<ILoggerService, LoggerService>()
                            .AddTransient<IConfigService, ConfigService>()
-                           .AddTransient<IFileService, FileService>()
+                           .AddSingleton<IFileService, FileService>()
                            .AddTransient<Starter>()
                            .BuildServiceProvider();
 

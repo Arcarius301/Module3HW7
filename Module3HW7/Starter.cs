@@ -14,10 +14,13 @@ namespace Module3HW7
     public class Starter
     {
         private readonly ILoggerService _loggerService;
+        private readonly IFileService _fileService;
 
-        public Starter(ILoggerService loggerService)
+        public Starter(ILoggerService loggerService, IFileService fileService)
         {
             _loggerService = loggerService;
+            _fileService = fileService;
+            _loggerService.OnBackup += () => MakeBackup();
         }
 
         public void Run()
@@ -42,6 +45,11 @@ namespace Module3HW7
                 var j = i;
                 _loggerService.Log($"{nameof(SecondMethod)}: {j}");
             }
+        }
+
+        private void MakeBackup()
+        {
+            _fileService.Copy();
         }
     }
 }
