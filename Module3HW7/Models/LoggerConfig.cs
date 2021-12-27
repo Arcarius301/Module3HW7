@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace Module3HW7.Models
 {
-    class LoggerConfig
+    public class LoggerConfig
     {
+        public string FileName { get; set; }
+        public string FileExtension { get; set; }
+        public string DirectoryPath { get; set; }
+        public int BackupFrequency { get; set; }
     }
 }
