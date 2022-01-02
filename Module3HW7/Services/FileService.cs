@@ -11,70 +11,73 @@ namespace Module3HW7.Services
 {
     public class FileService : IFileService
     {
-        private readonly SemaphoreSlim _semaphoreSlim;
         private readonly IConfigService _configService;
+        private readonly SemaphoreSlim _semaphoreSlim;
         private readonly StreamWriter _streamWriter;
-        private readonly string _directoryPath;
-        private readonly string _fileName;
-        private readonly string _path;
+        private readonly string _logName;
+        private readonly string _logDirectoryPath;
+        private readonly string _backupDirectoryPath;
+        private readonly string _logPath;
+        private readonly string _absolutePath;
 
         public FileService(IConfigService configService)
         {
-            _semaphoreSlim = new SemaphoreSlim(1);
             _configService = configService;
-            _directoryPath = _configService.FileConfig.DirectoryPath;
-            _fileName = _configService.FileConfig.FileName;
-            _path = Path.Combine(_directoryPath, _fileName);
+            _semaphoreSlim = new SemaphoreSlim(1);
+
+            _logName = _configService.FileConfig.FileName;
+            _logDirectoryPath = _configService.FileConfig.LogPath;
+            _backupDirectoryPath = _configService.FileConfig.BackupPath;
+            _logPath = Path.Combine(_logDirectoryPath, _logName);
+            _absolutePath = Directory.GetCurrentDirectory();
+
             Init();
-            _streamWriter = new StreamWriter(_path, true);
+            _streamWriter = new StreamWriter(_logPath, true);
         }
 
         public int LinesCount { get; private set; }
-        public string ReadFile(string path)
-        {
-            return File.ReadAllText(path);
-        }
 
         public async Task WriteAsync(string data)
         {
             await _semaphoreSlim.WaitAsync();
+
             await _streamWriter.WriteLineAsync(data);
             await _streamWriter.FlushAsync();
+
             _semaphoreSlim.Release();
         }
 
         public void Copy()
         {
-            var path = Path.Combine(Directory.GetCurrentDirectory(), _directoryPath, _fileName);
-            var destinationPath = Path.Combine(Directory.GetCurrentDirectory(), _directoryPath, "Backup", $"{DateTime.Now.ToString("yyyyMMddHHmmssffffff")}.txt");
+            var path = Path.Combine(_absolutePath, _logPath);
+            var destinationPath = Path.Combine(_absolutePath, _backupDirectoryPath, $"{DateTime.UtcNow.ToString("yyyyMMddHHmmssffffff")}.txt");
             File.Copy(path, destinationPath);
         }
 
         private void Init()
         {
-            if (!Directory.Exists(_directoryPath))
+            if (!Directory.Exists(_logDirectoryPath))
             {
-                Directory.CreateDirectory(_directoryPath);
+                Directory.CreateDirectory(_logDirectoryPath);
             }
 
-            if (!Directory.Exists($@"{_directoryPath}/Backup"))
+            if (!Directory.Exists(_backupDirectoryPath))
             {
-                Directory.CreateDirectory($@"{_directoryPath}/Backup");
+                Directory.CreateDirectory(_backupDirectoryPath);
             }
-
-            DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(_directoryPath, "Backup"));
-            var lastBackupLines = 0;
-
-            if (directoryInfo.GetFiles().Length != 0)
+            else
             {
-                lastBackupLines = File.ReadLines(Path.Combine(_directoryPath, "Backup", directoryInfo.GetFiles()
-                    .OrderByDescending(f => f.CreationTimeUtc)
-                    .First().Name)).Count();
-            }
+                DirectoryInfo directoryInfo = new DirectoryInfo(_backupDirectoryPath);
 
-            if (File.Exists(_path))
-            {
-                LinesCount = File.ReadLines(_path).Count() - lastBackupLines;
+                if (directoryInfo.GetFiles().Length != 0 && File.Exists(_logPath))
+                {
+                    var lastBackupLines = File.ReadLines(Path.Combine(_backupDirectoryPath, directoryInfo.GetFiles()
+                        .OrderByDescending(f => f.CreationTimeUtc)
+                        .First().Name))
+                        .Count();
+
+                    LinesCount = File.ReadLines(_logPath).Count() - lastBackupLines;
+                }
             }
         }
     }
