@@ -1,1 +1,1 @@
-{"LoggerConfig":{"BackupFrequency":16},"FileConfig":{"FileName":"log.txt","LogPath":"Log","BackupPath":"Log/Backup"}}
+{"LoggerConfig":{"BackupFrequency":16},"FileConfig":{"LogName":"log.txt","LogPath":"Log","BackupPath":"Log/Backup"}}

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Module3HW7.Models;
 using Module3HW7.Services;
 using Module3HW7.Services.Abstractions;
 

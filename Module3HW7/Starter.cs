@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.IO;
-using Module3HW7.Services;
 using Module3HW7.Services.Abstractions;
-using Module3HW7.Models;
-using Newtonsoft.Json;
 
 namespace Module3HW7
 {

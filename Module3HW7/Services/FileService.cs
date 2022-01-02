@@ -1,10 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.IO;
 using Module3HW7.Services.Abstractions;
 
 namespace Module3HW7.Services
@@ -25,7 +23,7 @@ namespace Module3HW7.Services
             _configService = configService;
             _semaphoreSlim = new SemaphoreSlim(1);
 
-            _logName = _configService.FileConfig.FileName;
+            _logName = _configService.FileConfig.LogName;
             _logDirectoryPath = _configService.FileConfig.LogPath;
             _backupDirectoryPath = _configService.FileConfig.BackupPath;
             _logPath = Path.Combine(_logDirectoryPath, _logName);
